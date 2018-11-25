@@ -1,82 +1,35 @@
-    // Chosen CSS
-    var config = {
-      ".chosen-select": {},
-      ".chosen-select-deselect": {
-        allow_single_deselect: true
-      },
-      ".chosen-select-no-single": {
-        disable_search_threshold: 10
-      },
-      ".chosen-select-no-results": {
-        no_results_text: "Oops, nothing found!"
-      },
-      ".chosen-select-width": {
-        width: "95%"
-      }
-    };
+// ==============================================================================
+// DEPENDENCIES
+// ==============================================================================
 
-    for (var selector in config) {
-      $(selector).chosen(config[selector]);
-    }
+var express = require("express");
 
-    // Capture the form inputs
-    $("#submit").on("click", function(event) {
-      event.preventDefault();
+// ==============================================================================
+// EXPRESS CONFIGURATION
+// ==============================================================================
 
-      // Form validation
-      function validateForm() {
-        var isValid = true;
-        $(".form-control").each(function() {
-          if ($(this).val() === "") {
-            isValid = false;
-          }
-        });
+// Tells node that we are creating an "express" server
+var app = express();
 
-        $(".chosen-select").each(function() {
+// Sets an initial port. We"ll use this later in our listener
+var PORT = process.env.PORT || 8080;
 
-          if ($(this).val() === "") {
-            isValid = false;
-          }
-        });
-        return isValid;
-      }
+// express.json and express.urlEncoded make it easy for our server to interpret data sent to it.
+// The code below is pretty standard.
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-      // If all required fields are filled
-      if (validateForm()) {
-        // Create an object for the user"s data
-        var userData = {
-          name: $("#name").val(),
-          photo: $("#photo").val(),
-          scores: [
-            $("#q1").val(),
-            $("#q2").val(),
-            $("#q3").val(),
-            $("#q4").val(),
-            $("#q5").val(),
-            $("#q6").val(),
-            $("#q7").val(),
-            $("#q8").val(),
-            $("#q9").val(),
-            $("#q10").val()
-          ]
-        };
+// ================================================================================
+// ROUTER
+// ================================================================================
 
-        // AJAX post the data to the friends API.
-        $.post("/api/friends", userData, function(data) {
+require("./app/routing/apiRoutes")(app);
+require("./app/routing/htmlRoutes")(app);
 
-          // Grab the result from the AJAX post so that the best match's name and photo are displayed.
-          $("#match-name").text(data.name);
-          $("#match-img").attr("src", data.photo);
+// ==============================================================================
+// LISTENER
+// ==============================================================================
 
-          // Show the modal with the best match
-          $("#results-modal").modal("toggle");
-
-        });
-      } else {
-        alert("Please fill out all fields before submitting!");
-      }
-    });
-
-
-
-
+app.listen(PORT, function() {
+  console.log("App listening on PORT: " + PORT);
+});

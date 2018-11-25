@@ -1,3 +1,4 @@
+// put all data in an array moron
 [
     {
     "name": "Pakalu Papito",
@@ -223,4 +224,7 @@
     "5"
     ]
     }
-    ]
+    ];
+    
+    //exports data to the app
+    module.exports = friends;
